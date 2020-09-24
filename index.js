@@ -1,8 +1,17 @@
 'use strict';
 
-const apiKey = 'i6jg7Su8c8OSzFffVbcix8OC2dZwT4ZKHyFaEwZP'; 
-const searchURL = 'https://developer.nps.gov/api/v1/parks?stateCode=';
+// https://www.googleapis.com/youtube/v3/search | SEARCHURL | ? | key=i6jg7Su8c8OSzFffVbcix8OC2dZwT4ZKHyFaEwZP | APIKEY | & | q=FL | QUERY | & | part=snippet | PART | & | maxResults=10 | MAXRESULTS | & | type=video | TYPE
 
+//https://developer.nps.gov/api/v1/parks | SEARCHURL |  ? | stateCode=fl | QUERY | & | limit=10 | LIMIT | & | api_key=i6jg7Su8c8OSzFffVbcix8OC2dZwT4ZKHyFaEwZP | API_KEY
+
+const apiKey = 'i6jg7Su8c8OSzFffVbcix8OC2dZwT4ZKHyFaEwZP'; 
+const searchURL = 'https://developer.nps.gov/api/v1/parks';
+
+function formatQueryParams(params) {
+    const queryItems = Object.keys(params)
+      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+    return queryItems.join('&');
+  }
 
 function displayResults(responseJson) {
   // if there are previous results, remove them
@@ -20,10 +29,16 @@ function displayResults(responseJson) {
   $('#results').removeClass('hidden');
 };
 
-function getParks(stateCode,maxResults=10) {
-    console.log('GET URL RAN');
-    const url = searchURL + stateCode + '&limit=' + maxResults + '&api_key=' + apiKey;
-  
+function getParks(query,maxResults=10) {
+    const params = {
+        stateCode: query,
+        limit: maxResults,
+        api_key: apiKey
+    };
+
+    const queryString = formatQueryParams(params)
+    const url = searchURL + '?' + queryString;
+
     console.log(url);
   
     fetch(url)
